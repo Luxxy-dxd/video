@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Downloader</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+    input { width: 60%; padding: 10px; margin: 10px 0; }
+    button { padding: 10px 20px; cursor: pointer; }
+    .result { margin-top: 20px; }
+    img { max-width: 300px; margin-top: 10px; }
+    a { display: inline-block; margin-top: 10px; padding: 10px 15px; background: #4caf50; color: white; text-decoration: none; border-radius: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Video Downloader</h1>
+  <input type="text" id="videoUrl" placeholder="Paste video URL here">
+  <button onclick="fetchVideo()">Download</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    async function fetchVideo() {
+      const url = document.getElementById('videoUrl').value;
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = "Fetching video... ⏳";
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/fetch?url=${encodeURIComponent(url)}`);
+        const data = await response.json();
+
+        if (data.error) {
+          resultDiv.innerHTML = "Error: " + data.error;
+          return;
+        }
+
+        resultDiv.innerHTML = `
+          <h3>${data.title}</h3>
+          <img src="${data.thumbnail}" alt="Thumbnail">
+          <br>
+          <a href="${data.url}" target="_blank" download>Download Video</a>
+        `;
+      } catch (err) {
+        resultDiv.innerHTML = "Something went wrong. ❌";
+      }
+    }
+  </script>
+
+</body>
+</html>
